@@ -10,10 +10,8 @@
 
 #define MAT_SIDE 10
 
-typedef void visulizer(size_t side, float matrix[side][side]);
+typedef void visulizer();
 
-float mata[MAT_SIDE][MAT_SIDE];
-float matb[MAT_SIDE][MAT_SIDE];
 
 void *vishandle;
 char *errmsg;
@@ -34,31 +32,23 @@ visulizer *hot_redrawer()
     return dlsym(vishandle, "main");
 }
 
-void rand_init(float *matrix, size_t side)
-{
-    for(int i=0;i<side*side;i++)
-    {
-        matrix[i] = (float)rand()/(float)(RAND_MAX/a);;
-    }
-}
 int main(int argc, char **argv) 
 {
     NOB_GO_REBUILD_URSELF(argc, argv);
     errmsg = NULL;
-    rand_init(*mata, MAT_SIDE);
     visulizer *matdraw = hot_redrawer();
     printf("ad");
     InitWindow(800, 500, "main window");
     printf("Heyy\n");
     while(!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
         if(IsKeyPressed(KEY_R))
             matdraw = hot_redrawer();
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            if(errmsg == NULL) 
-                matdraw(MAT_SIDE, mata);
-            else
-                DrawText(errmsg, 0, 0, 20, RED);
+        if(errmsg == NULL) 
+            matdraw();
+        else
+            DrawText(errmsg, 0, 0, 20, RED);
         EndDrawing();
     }
     CloseWindow();
