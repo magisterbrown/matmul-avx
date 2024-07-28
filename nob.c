@@ -10,21 +10,27 @@
 
 #define MAT_SIDE 10
 
-typedef void visulizer(float *matrix);
+typedef void visulizer(size_t side, float matrix[side][side]);
 
 float mata[MAT_SIDE][MAT_SIDE];
 float matb[MAT_SIDE][MAT_SIDE];
 
 void *vishandle;
+char *errmsg;
 visulizer *hot_redrawer()
 {
     Nob_Cmd build = {0};
     char *path = "artifacts/vis.so";
     nob_cmd_append(&build, "gcc", "visualizer.c", "-o", path, "-shared");
-    nob_cmd_run_sync(build);
+    if(!nob_cmd_run_sync(build))
+    {
+        errmsg = "Build of viz failed";
+        return NULL;
+    }
     if(vishandle != NULL)
         dlclose(vishandle);
     vishandle = dlopen(path, RTLD_NOW);
+    errmsg = NULL;
     return dlsym(vishandle, "main");
 }
 
@@ -32,21 +38,27 @@ void rand_init(float *matrix, size_t side)
 {
     for(int i=0;i<side*side;i++)
     {
-        matrix[i] = 3.0f;
+        matrix[i] = (float)rand()/(float)(RAND_MAX/a);;
     }
 }
-__attribute__((weak)) void nonexistent();
 int main(int argc, char **argv) 
 {
     NOB_GO_REBUILD_URSELF(argc, argv);
+    errmsg = NULL;
     rand_init(*mata, MAT_SIDE);
     visulizer *matdraw = hot_redrawer();
     printf("ad");
     InitWindow(800, 500, "main window");
     printf("Heyy\n");
     while(!WindowShouldClose()) {
+        if(IsKeyPressed(KEY_R))
+            matdraw = hot_redrawer();
         BeginDrawing();
-            matdraw(*mata);
+            ClearBackground(RAYWHITE);
+            if(errmsg == NULL) 
+                matdraw(MAT_SIDE, mata);
+            else
+                DrawText(errmsg, 0, 0, 20, RED);
         EndDrawing();
     }
     CloseWindow();
