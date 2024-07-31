@@ -491,39 +491,6 @@ Nob_Proc nob_cmd_run_async(Nob_Cmd cmd)
     nob_sb_free(sb);
     memset(&sb, 0, sizeof(sb));
 
-#ifdef _WIN32
-    // https://docs.microsoft.com/en-us/windows/win32/procthread/creating-a-child-process-with-redirected-input-and-output
-
-    STARTUPINFO siStartInfo;
-    ZeroMemory(&siStartInfo, sizeof(siStartInfo));
-    siStartInfo.cb = sizeof(STARTUPINFO);
-    // NOTE: theoretically setting NULL to std handles should not be a problem
-    // https://docs.microsoft.com/en-us/windows/console/getstdhandle?redirectedfrom=MSDN#attachdetach-behavior
-    // TODO: check for errors in GetStdHandle
-    siStartInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-    siStartInfo.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-    siStartInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
-
-    PROCESS_INFORMATION piProcInfo;
-    ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
-
-    // TODO: use a more reliable rendering of the command instead of cmd_render
-    // cmd_render is for logging primarily
-    nob_cmd_render(cmd, &sb);
-    nob_sb_append_null(&sb);
-    BOOL bSuccess = CreateProcessA(NULL, sb.items, NULL, NULL, TRUE, 0, NULL, NULL, &siStartInfo, &piProcInfo);
-    nob_sb_free(sb);
-
-    if (!bSuccess) {
-        nob_log(NOB_ERROR, "Could not create child process: %lu", GetLastError());
-        return NOB_INVALID_PROC;
-    }
-
-    CloseHandle(piProcInfo.hThread);
-
-    return piProcInfo.hProcess;
-#else
     pid_t cpid = fork();
     if (cpid < 0) {
         nob_log(NOB_ERROR, "Could not fork child process: %s", strerror(errno));
