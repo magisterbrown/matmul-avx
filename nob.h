@@ -1086,4 +1086,3 @@ int closedir(DIR *dirp)
 #endif // _WIN32
 // minirent.h SOURCE END ////////////////////////////////////////
 
-#endif

@@ -12,20 +12,32 @@
 
 typedef void visualizer(void *state);
 typedef void *starter();
+typedef void source(char *file);
 
 visualizer *matdraw;
 starter *matinit;
+source *based;
 
 void *vishandle;
 char *errmsg;
 void *hot_redrawer()
 {
+    printf("\e[1;1H\e[2J\n");
     Nob_Cmd build = {0};
     char *path = "artifacts/vis.so";
-    nob_cmd_append(&build, "gcc", "generator.c", "visualizer.c", "-o", path, "-shared");
+    char *asmf = "artifacts/gen.s";
+    nob_cmd_append(&build, "gcc", "-S", "generator.c", "-o", asmf);
     if(!nob_cmd_run_sync(build))
     {
-        errmsg = "Build failed";
+        errmsg = "Generator build failed";
+        return NULL;
+    }
+
+    Nob_Cmd builds = {0};
+    nob_cmd_append(&builds, "gcc", asmf, "visualizer.c", "-o", path, "-shared", "-fPIC");
+    if(!nob_cmd_run_sync(builds))
+    {
+        errmsg = "Shared build failed";
         return NULL;
     }
     if(vishandle != NULL)
@@ -34,6 +46,8 @@ void *hot_redrawer()
     errmsg = NULL;
     matdraw = dlsym(vishandle, "draw");
     matinit = dlsym(vishandle, "init");
+    based = dlsym(vishandle, "based");
+    based(asmf);
     return matinit();
 }
 

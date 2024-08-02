@@ -24,12 +24,13 @@ void measurement()
 
 int main()
 {
-    struct perf_event_attr pe = {0};
 
-    pe.type = PERF_TYPE_HARDWARE;
-    pe.size = sizeof(struct perf_event_attr);
-    pe.config = PERF_COUNT_HW_INSTRUCTIONS;
-    pe.exclude_kernel = 1;
+    struct perf_event_attr pe = {
+        .type = PERF_TYPE_HARDWARE,
+        .size = sizeof(struct perf_event_attr),
+        .config = PERF_COUNT_HW_INSTRUCTIONS,
+        .exclude_kernel = 1
+    };
 
     int fd = syscall(__NR_perf_event_open, &pe, 0, -1, -1, 0);
     ioctl(fd, PERF_EVENT_IOC_RESET, 0);
