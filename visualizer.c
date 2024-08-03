@@ -24,9 +24,11 @@ void draw(struct state *data)
 {
     draw_mat(SIDA, COMMON, data->mata, (Vector2){25, 25}, BLUE, 25);
     draw_mat(COMMON, SIDB, data->matb, (Vector2){25, 25*(COMMON+2)}, RED, 25);
-    draw_mat(SIDA, SIDB, data->matc, (Vector2){25, 25*(SIDB+COMMON+3)}, GREEN, 25);
+    draw_mat(SIDA, SIDB, data->matc, (Vector2){25*(COMMON+2), 25*(COMMON+2)}, GREEN, 25);
     DrawText(TextFormat("Insturctions executed: %lld", data->rf.values[0].value), 10, GetScreenHeight()-30, 20, BLACK);
-    DrawText(TextFormat("Branches missed: %lld", data->rf.values[1].value), 10, GetScreenHeight()-60, 20, BLACK);
+    DrawText(TextFormat("Branches missed: %lld/%lld", data->rf.values[1].value, data->rf.values[2].value), 10, GetScreenHeight()-60, 20, BLACK);
+    DrawText(TextFormat("Last level cache missed: %lld/%lld", data->rf.values[4].value, data->rf.values[3].value), 10, GetScreenHeight()-90, 20, BLACK);
+    DrawText(TextFormat("Execution time: %g ms", data->time), 10, GetScreenHeight()-120, 20, BLACK);
 }
 
 #include <regex.h>
@@ -35,6 +37,7 @@ void based(char *file)
 {
     char line[100];
     FILE *f = fopen(file, "r");
+    FILE *o = fopen("assembly/matmul.asm", "w");
     regex_t startb;
     regex_t stopb;
     regcomp(&startb, "^matmul", 0);
@@ -45,9 +48,10 @@ void based(char *file)
         if(regexec(&startb, line, 0, NULL, 0)!=REG_NOMATCH)
             printable = 1;
         if(printable)
-            printf("%s", line);
+            fprintf(o, "%s", line);
         if(regexec(&stopb, line, 0, NULL, 0)!=REG_NOMATCH)
             printable = 0;
     }
     fclose(f);
+    fclose(o);
 }
