@@ -5,7 +5,7 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-void draw_mat(size_t a, size_t b, int matrix[a][b], Vector2 pos, Color col, int cellsz)
+void draw_mat(size_t a, size_t b, float matrix[a][b], Vector2 pos, Color col, int cellsz)
 {
     int mv = 0;
     for(int x=0;x<a;x++)
@@ -16,7 +16,7 @@ void draw_mat(size_t a, size_t b, int matrix[a][b], Vector2 pos, Color col, int 
         for(int y=0;y<b;y++)
         {
             DrawRectangle(pos.y+y*cellsz, pos.x+x*cellsz, cellsz, cellsz, ColorAlpha(col, (float)matrix[x][y]/mv));
-            DrawText(TextFormat("%d", matrix[x][y]), pos.y+y*cellsz+8, pos.x+x*cellsz+2, cellsz, BLACK);
+            DrawText(TextFormat("%.1f", matrix[x][y]), pos.y+y*cellsz+4, pos.x+x*cellsz+4, cellsz/2, BLACK);
         }
 }
 
