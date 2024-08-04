@@ -1,7 +1,5 @@
 artifacts/
-generator.c
 nob
 nob.old
 raylib/
-state.h
 valgrind-3.23.0/
