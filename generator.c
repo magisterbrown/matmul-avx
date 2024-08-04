@@ -13,24 +13,17 @@ void rand_init(size_t a, size_t b ,float matrix[a][b], int max)
 void matmul(size_t a, size_t common, size_t b, float mata[a][common], float matb[common][b], float res[a][b])
 {
     assert(common%8==0);
-    float *fin = aligned_alloc(32, sizeof(float)*8);
     for(int x=0;x<a;x++)
     {
         for(int y=0;y<b;y++)
         {
             res[x][y] = 0;
-            for(int i=0;i<common;i+=8)
+            for(int i=0;i<common;i++)
             {
-                __m256 vea = _mm256_set_ps(mata[x][i], mata[x][i+1], mata[x][i+2], mata[x][i+3], mata[x][i+4], mata[x][i+5], mata[x][i+6], mata[x][i+7]);
-                __m256 veb = _mm256_set_ps(matb[i][y], matb[i+1][y], matb[i+2][y], matb[i+3][y], matb[i+4][y], matb[i+5][y], matb[i+6][y], matb[i+7][y]);
-                __m256 mults = _mm256_mul_ps(vea, veb);
-                _mm256_store_ps(fin, mults);
-                for(int j=0;j<8;j++)
-                    res[x][y]+=fin[j];
+                res[x][y]+=mata[x][i]*matb[i][y];
             }
         }
     }
-    free(fin);
 }
 
 #include <linux/perf_event.h>    /* Definition of PERF_* constants */
