@@ -67,6 +67,8 @@ int main(int argc, char **argv)
         else
             DrawText(errmsg, 0, 0, 20, RED);
         EndDrawing();
+        if(IsKeyPressed(KEY_S))
+            TakeScreenshot("matmul.png");
     }
     CloseWindow();
     return 0;

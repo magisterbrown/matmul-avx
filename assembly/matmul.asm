@@ -69,8 +69,8 @@ matmul:
 	.loc 1 20 23
 	mov	esi, DWORD PTR -32[rbp]
 	movsx	rsi, esi
-	vxorps	xmm0, xmm0, xmm0
-	vmovss	DWORD PTR [rdi+rsi*4], xmm0
+	pxor	xmm0, xmm0
+	movss	DWORD PTR [rdi+rsi*4], xmm0
 .LBB6:
 	.loc 1 21 21
 	mov	DWORD PTR -28[rbp], 0
@@ -87,7 +87,7 @@ matmul:
 	.loc 1 23 35
 	mov	esi, DWORD PTR -28[rbp]
 	movsx	rsi, esi
-	vmovss	xmm1, DWORD PTR [rdi+rsi*4]
+	movss	xmm1, DWORD PTR [rdi+rsi*4]
 	.loc 1 23 43
 	mov	esi, DWORD PTR -28[rbp]
 	movsx	rsi, esi
@@ -98,9 +98,9 @@ matmul:
 	.loc 1 23 46
 	mov	esi, DWORD PTR -32[rbp]
 	movsx	rsi, esi
-	vmovss	xmm0, DWORD PTR [rdi+rsi*4]
+	movss	xmm0, DWORD PTR [rdi+rsi*4]
 	.loc 1 23 38
-	vmulss	xmm1, xmm1, xmm0
+	mulss	xmm1, xmm0
 	.loc 1 23 20
 	mov	esi, DWORD PTR -36[rbp]
 	movsx	rsi, esi
@@ -111,7 +111,7 @@ matmul:
 	.loc 1 23 23
 	mov	esi, DWORD PTR -32[rbp]
 	movsx	rsi, esi
-	vmovss	xmm0, DWORD PTR [rdi+rsi*4]
+	movss	xmm0, DWORD PTR [rdi+rsi*4]
 	.loc 1 23 20
 	mov	esi, DWORD PTR -36[rbp]
 	movsx	rsi, esi
@@ -120,10 +120,10 @@ matmul:
 	mov	rsi, QWORD PTR -96[rbp]
 	add	rdi, rsi
 	.loc 1 23 26
-	vaddss	xmm0, xmm1, xmm0
+	addss	xmm0, xmm1
 	mov	esi, DWORD PTR -32[rbp]
 	movsx	rsi, esi
-	vmovss	DWORD PTR [rdi+rsi*4], xmm0
+	movss	DWORD PTR [rdi+rsi*4], xmm0
 	.loc 1 21 35 discriminator 3
 	add	DWORD PTR -28[rbp], 1
 .L10:
