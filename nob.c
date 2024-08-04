@@ -26,7 +26,7 @@ void *hot_redrawer()
     Nob_Cmd build = {0};
     char *path = "artifacts/vis.so";
     char *asmf = "artifacts/gen.s";
-    nob_cmd_append(&build, "gcc", "-ggdb", "-O0", "-S","-masm=intel", "generator.c", "-o", asmf);
+    nob_cmd_append(&build, "gcc", "-ggdb", "-O0", "-mavx", "-S","-masm=intel", "generator.c", "-o", asmf);
     if(!nob_cmd_run_sync(build))
     {
         errmsg = "Generator build failed";
